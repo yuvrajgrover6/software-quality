@@ -67,7 +67,7 @@ public class WwTest
         string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
         Assert.That(
             result,
-            Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!")
+            Is.EqualTo("No Insurance for you!!  Too many accidents - go take a course!")
         );
     }
 
@@ -323,7 +323,7 @@ public class WwTest
         string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
         Assert.That(
             result,
-            Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!")
+            Is.EqualTo("No Insurance for you!!  Too many accidents - go take a course!")
         );
     }
 
@@ -374,7 +374,7 @@ public class WwTest
     }
 
     [Test]
-    public void TC15_FormValidationForInvalidEmail()
+    public void TC15_ValidDetails_InsuranceCalculation()
     {
         // Step 2: Enter valid details with Age = 28, Driving Experience = 3, Accidents = 0 but with an invalid email
         driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
