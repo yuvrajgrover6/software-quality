@@ -44,7 +44,147 @@ public class WwTest {
             }
         }
 
-  
+  [Test]
+public void TC01_TooManyAccidents()
+{
+
+// Step 2: Enter all valid details with Age = 35, Driving Experience = 12, Accidents = 4
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("35");
+driver.FindElement(By.Id("experience")).SendKeys("12");
+driver.FindElement(By.Id("accidents")).SendKeys("4");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: No insurance provided due to too many accidents
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!"));
+}
+
+[Test]
+public void TC02_InsuranceForLowExperience()
+{
+
+// Step 2: Enter all valid details with Age = 25, Driving Experience = 0, Accidents = 2
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("25");
+driver.FindElement(By.Id("experience")).SendKeys("0");
+driver.FindElement(By.Id("accidents")).SendKeys("2");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $6000 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$6000"));
+}
+[Test]
+public void TC03_InsuranceForModerateExperience()
+{
+
+// Step 2: Enter all valid details with Age = 28, Driving Experience = 5, Accidents = 1
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("28");
+driver.FindElement(By.Id("experience")).SendKeys("5");
+driver.FindElement(By.Id("accidents")).SendKeys("1");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $4500 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$4500"));
+}
+[Test]
+public void TC04_InsuranceForHighExperience()
+{
+
+// Step 2: Enter all valid details with Age = 40, Driving Experience = 15, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("40");
+driver.FindElement(By.Id("experience")).SendKeys("15");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $2190 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$2190"));
+}
+
+[Test]
+public void TC05_InsuranceWithDiscount()
+{
+
+// Step 2: Enter all valid details with Age = 35, Driving Experience = 10, Accidents = 1
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("35");
+driver.FindElement(By.Id("experience")).SendKeys("10");
+driver.FindElement(By.Id("accidents")).SendKeys("1");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided with a 27% discount on the base rate
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo("$2190"));
+}
+[Test]
+public void TC06_InsuranceForYoungDriver()
+{
+
+// Step 2: Enter valid details with Age = 16, Driving Experience = 0, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("16");
+driver.FindElement(By.Id("experience")).SendKeys("0");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $6000 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$6000"));
+}
+
 
 
 
