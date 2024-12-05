@@ -4,397 +4,395 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium.Interactions;
-using NUnit.Framework;
-
 
 namespace software_quality;
 
 [TestFixture]
-public class WwTest {
-  private IWebDriver driver;
-  public IDictionary<string, object> vars {get; private set;}
-  private IJavaScriptExecutor js;
-  [SetUp]
-  public void SetUp() {
-    driver = new ChromeDriver();
-    js = (IJavaScriptExecutor)driver;
-    vars = new Dictionary<string, object>();
+public class WwTest
+{
+    private IWebDriver driver;
+    public IDictionary<string, object> vars { get; private set; }
+    private IJavaScriptExecutor js;
+
+    [SetUp]
+    public void SetUp()
+    {
+        driver = new ChromeDriver();
+        js = (IJavaScriptExecutor)driver;
+        vars = new Dictionary<string, object>();
         driver.Navigate().GoToUrl("http://localhost:8080/prog8171_A04/");
         driver.Manage().Window.Maximize();
         driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         driver.FindElement(By.CssSelector(".btn")).Click();
- 
+    }
 
-  }
-  [TearDown]
-        public void TearDown()
+    [TearDown]
+    public void TearDown()
+    {
+        // Dispose of the WebDriver after each test
+        if (driver != null)
         {
-            // Dispose of the WebDriver after each test
-            if (driver != null)
-            {
-                driver.Quit();
-                driver.Dispose();
-                driver = null;
-            }
+            driver.Quit();
+            driver.Dispose();
+            driver = null;
         }
+    }
 
-  [Test]
-public void TC01_TooManyAccidents()
-{
+    [Test]
+    public void TC01_TooManyAccidents()
+    {
+        // Step 2: Enter all valid details with Age = 35, Driving Experience = 12, Accidents = 4
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("35");
+        driver.FindElement(By.Id("experience")).SendKeys("12");
+        driver.FindElement(By.Id("accidents")).SendKeys("4");
 
-// Step 2: Enter all valid details with Age = 35, Driving Experience = 12, Accidents = 4
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("35");
-driver.FindElement(By.Id("experience")).SendKeys("12");
-driver.FindElement(By.Id("accidents")).SendKeys("4");
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Expected outcome: No insurance provided due to too many accidents
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(
+            result,
+            Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!")
+        );
+    }
 
-// Expected outcome: No insurance provided due to too many accidents
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!"));
-}
+    [Test]
+    public void TC02_InsuranceForLowExperience()
+    {
+        // Step 2: Enter all valid details with Age = 25, Driving Experience = 0, Accidents = 2
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("25");
+        driver.FindElement(By.Id("experience")).SendKeys("0");
+        driver.FindElement(By.Id("accidents")).SendKeys("2");
 
-[Test]
-public void TC02_InsuranceForLowExperience()
-{
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 2: Enter all valid details with Age = 25, Driving Experience = 0, Accidents = 2
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("25");
-driver.FindElement(By.Id("experience")).SendKeys("0");
-driver.FindElement(By.Id("accidents")).SendKeys("2");
+        // Expected outcome: Insurance provided at $6000 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$6000"));
+    }
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+    [Test]
+    public void TC03_InsuranceForModerateExperience()
+    {
+        // Step 2: Enter all valid details with Age = 28, Driving Experience = 5, Accidents = 1
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("28");
+        driver.FindElement(By.Id("experience")).SendKeys("5");
+        driver.FindElement(By.Id("accidents")).SendKeys("1");
 
-// Expected outcome: Insurance provided at $6000 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$6000"));
-}
-[Test]
-public void TC03_InsuranceForModerateExperience()
-{
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 2: Enter all valid details with Age = 28, Driving Experience = 5, Accidents = 1
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("28");
-driver.FindElement(By.Id("experience")).SendKeys("5");
-driver.FindElement(By.Id("accidents")).SendKeys("1");
+        // Expected outcome: Insurance provided at $4500 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$4500"));
+    }
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+    [Test]
+    public void TC04_InsuranceForHighExperience()
+    {
+        // Step 2: Enter all valid details with Age = 40, Driving Experience = 15, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("40");
+        driver.FindElement(By.Id("experience")).SendKeys("15");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Expected outcome: Insurance provided at $4500 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$4500"));
-}
-[Test]
-public void TC04_InsuranceForHighExperience()
-{
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 2: Enter all valid details with Age = 40, Driving Experience = 15, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("40");
-driver.FindElement(By.Id("experience")).SendKeys("15");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
+        // Expected outcome: Insurance provided at $2190 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$2190"));
+    }
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+    [Test]
+    public void TC05_InsuranceWithDiscount()
+    {
+        // Step 2: Enter all valid details with Age = 35, Driving Experience = 10, Accidents = 1
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("35");
+        driver.FindElement(By.Id("experience")).SendKeys("10");
+        driver.FindElement(By.Id("accidents")).SendKeys("1");
 
-// Expected outcome: Insurance provided at $2190 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$2190"));
-}
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-[Test]
-public void TC05_InsuranceWithDiscount()
-{
+        // Expected outcome: Insurance provided with a 27% discount on the base rate
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$2190"));
+    }
 
-// Step 2: Enter all valid details with Age = 35, Driving Experience = 10, Accidents = 1
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("35");
-driver.FindElement(By.Id("experience")).SendKeys("10");
-driver.FindElement(By.Id("accidents")).SendKeys("1");
+    [Test]
+    public void TC06_InsuranceForYoungDriver()
+    {
+        // Step 2: Enter valid details with Age = 16, Driving Experience = 0, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("16");
+        driver.FindElement(By.Id("experience")).SendKeys("0");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Expected outcome: Insurance provided with a 27% discount on the base rate
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("$2190"));
-}
-[Test]
-public void TC06_InsuranceForYoungDriver()
-{
+        // Expected outcome: Insurance provided at $6000 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$6000"));
+    }
 
-// Step 2: Enter valid details with Age = 16, Driving Experience = 0, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("16");
-driver.FindElement(By.Id("experience")).SendKeys("0");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
+    [Test]
+    public void TC07_InsuranceForNewDriverWithAccidents()
+    {
+        // Step 2: Enter valid details with Age = 18, Driving Experience = 1, Accidents = 2
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("18");
+        driver.FindElement(By.Id("experience")).SendKeys("1");
+        driver.FindElement(By.Id("accidents")).SendKeys("2");
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Expected outcome: Insurance provided at $6000 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$6000"));
-}
+        // Expected outcome: Insurance provided at $4500 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$4500"));
+    }
 
-[Test]
-public void TC07_InsuranceForNewDriverWithAccidents()
-{
+    [Test]
+    public void TC08_InsuranceForLowAccidentRate()
+    {
+        // Step 2: Enter valid details with Age = 29, Driving Experience = 3, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("29");
+        driver.FindElement(By.Id("experience")).SendKeys("3");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Step 2: Enter valid details with Age = 18, Driving Experience = 1, Accidents = 2
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("18");
-driver.FindElement(By.Id("experience")).SendKeys("1");
-driver.FindElement(By.Id("accidents")).SendKeys("2");
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Expected outcome: Insurance provided at $4500 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$4500"));
+    }
 
-// Expected outcome: Insurance provided at $4500 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$4500"));
-}
-[Test]
-public void TC08_InsuranceForLowAccidentRate()
-{
+    [Test]
+    public void TC09_DiscountedInsurance()
+    {
+        // Step 2: Enter valid details with Age = 30, Driving Experience = 10, Accidents = 1
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("30");
+        driver.FindElement(By.Id("experience")).SendKeys("10");
+        driver.FindElement(By.Id("accidents")).SendKeys("1");
 
-// Step 2: Enter valid details with Age = 29, Driving Experience = 3, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("29");
-driver.FindElement(By.Id("experience")).SendKeys("3");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Expected outcome: Insurance provided with a 27% discount on the base rate ($3000 − $810 = $2190 annually)
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$2190"));
+    }
 
-// Expected outcome: Insurance provided at $4500 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$4500"));
-}
+    [Test]
+    public void TC10_DiscountedInsuranceForExperiencedDriver()
+    {
+        // Step 2: Enter valid details with Age = 45, Driving Experience = 20, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("45");
+        driver.FindElement(By.Id("experience")).SendKeys("20");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-[Test]
-public void TC09_DiscountedInsurance()
-{
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 2: Enter valid details with Age = 30, Driving Experience = 10, Accidents = 1
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("30");
-driver.FindElement(By.Id("experience")).SendKeys("10");
-driver.FindElement(By.Id("accidents")).SendKeys("1");
+        // Expected outcome: Insurance provided with a 27% discount on the base rate ($3000 − $810 = $2190 annually)
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$2190"));
+    }
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+    [Test]
+    public void TC11_InsuranceForMiddleAgedDriverNoAccidents()
+    {
+        // Step 2: Enter valid details with Age = 40, Driving Experience = 0, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("40");
+        driver.FindElement(By.Id("experience")).SendKeys("0");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Expected outcome: Insurance provided with a 27% discount on the base rate ($3000 − $810 = $2190 annually)
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("$2190"));
-}
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-[Test]
-public void TC10_DiscountedInsuranceForExperiencedDriver()
-{
-// Step 2: Enter valid details with Age = 45, Driving Experience = 20, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("45");
-driver.FindElement(By.Id("experience")).SendKeys("20");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
+        // Expected outcome: Insurance provided at $6000 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$6000"));
+    }
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+    [Test]
+    public void TC12_NoInsuranceForMultipleAccidents()
+    {
+        // Step 2: Enter valid details with Age = 22, Driving Experience = 5, Accidents = 3
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("22");
+        driver.FindElement(By.Id("experience")).SendKeys("5");
+        driver.FindElement(By.Id("accidents")).SendKeys("3");
 
-// Expected outcome: Insurance provided with a 27% discount on the base rate ($3000 − $810 = $2190 annually)
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("$2190"));
-}
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
+        // Expected outcome: No insurance provided due to excessive accidents
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(
+            result,
+            Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!")
+        );
+    }
 
-[Test]
-public void TC11_InsuranceForMiddleAgedDriverNoAccidents()
-{
+    [Test]
+    public void TC13_StandardInsuranceForExperiencedDriver()
+    {
+        // Step 2: Enter valid details with Age = 35, Driving Experience = 8, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("35");
+        driver.FindElement(By.Id("experience")).SendKeys("8");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Step 2: Enter valid details with Age = 40, Driving Experience = 0, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("40");
-driver.FindElement(By.Id("experience")).SendKeys("0");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Expected outcome: Insurance provided at $4500 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$3285"));
+    }
 
-// Expected outcome: Insurance provided at $6000 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$6000"));
-}
-[Test]
-public void TC12_NoInsuranceForMultipleAccidents()
-{
+    [Test]
+    public void TC14_StandardInsuranceForYoungDriver()
+    {
+        // Step 2: Enter valid details with Age = 19, Driving Experience = 2, Accidents = 0
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("19");
+        driver.FindElement(By.Id("experience")).SendKeys("2");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Step 2: Enter valid details with Age = 22, Driving Experience = 5, Accidents = 3
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("22");
-driver.FindElement(By.Id("experience")).SendKeys("5");
-driver.FindElement(By.Id("accidents")).SendKeys("3");
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
+        // Expected outcome: Insurance provided at $4500 annually
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$4500"));
+    }
 
-// Expected outcome: No insurance provided due to excessive accidents
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!"));
-}
-[Test]
-public void TC13_StandardInsuranceForExperiencedDriver()
-{
+    [Test]
+    public void TC15_FormValidationForInvalidEmail()
+    {
+        // Step 2: Enter valid details with Age = 28, Driving Experience = 3, Accidents = 0 but with an invalid email
+        driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+        driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+        driver.FindElement(By.Id("address")).SendKeys("12 main st");
+        driver.FindElement(By.Id("city")).SendKeys("milron");
+        driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+        driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+        driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+        driver.FindElement(By.Id("age")).SendKeys("28");
+        driver.FindElement(By.Id("experience")).SendKeys("3");
+        driver.FindElement(By.Id("accidents")).SendKeys("0");
 
-// Step 2: Enter valid details with Age = 35, Driving Experience = 8, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("35");
-driver.FindElement(By.Id("experience")).SendKeys("8");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
+        // Step 3: Submit the form
+        driver.FindElement(By.Id("btnSubmit")).Click();
 
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
-
-// Expected outcome: Insurance provided at $4500 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$3285"));
-}
-[Test]
-public void TC14_StandardInsuranceForYoungDriver()
-{
-
-// Step 2: Enter valid details with Age = 19, Driving Experience = 2, Accidents = 0
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("19");
-driver.FindElement(By.Id("experience")).SendKeys("2");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
-
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
-
-// Expected outcome: Insurance provided at $4500 annually
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo( "$4500"));
-}
-[Test]
-public void TC15_FormValidationForInvalidEmail()
-{
-// Step 2: Enter valid details with Age = 28, Driving Experience = 3, Accidents = 0 but with an invalid email
-driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
-driver.FindElement(By.Id("lastName")).SendKeys("Grover");
-driver.FindElement(By.Id("address")).SendKeys("12 main st");
-driver.FindElement(By.Id("city")).SendKeys("milron");
-driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
-driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
-driver.FindElement(By.Id("age")).SendKeys("28");
-driver.FindElement(By.Id("experience")).SendKeys("3");
-driver.FindElement(By.Id("accidents")).SendKeys("0");
-
-// Step 3: Submit the form
-driver.FindElement(By.Id("btnSubmit")).Click();
-
-// Expected outcome: Form validation error for invalid email
-string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("$4500"));
-}
-
-
-
+        // Expected outcome: Form validation error for invalid email
+        string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+        Assert.That(result, Is.EqualTo("$4500"));
+    }
 }
