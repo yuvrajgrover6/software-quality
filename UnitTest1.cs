@@ -185,6 +185,215 @@ string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
 Assert.That(result, Is.EqualTo( "$6000"));
 }
 
+[Test]
+public void TC07_InsuranceForNewDriverWithAccidents()
+{
+
+// Step 2: Enter valid details with Age = 18, Driving Experience = 1, Accidents = 2
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("18");
+driver.FindElement(By.Id("experience")).SendKeys("1");
+driver.FindElement(By.Id("accidents")).SendKeys("2");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $4500 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$4500"));
+}
+[Test]
+public void TC08_InsuranceForLowAccidentRate()
+{
+
+// Step 2: Enter valid details with Age = 29, Driving Experience = 3, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("29");
+driver.FindElement(By.Id("experience")).SendKeys("3");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $4500 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$4500"));
+}
+
+[Test]
+public void TC09_DiscountedInsurance()
+{
+
+// Step 2: Enter valid details with Age = 30, Driving Experience = 10, Accidents = 1
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("30");
+driver.FindElement(By.Id("experience")).SendKeys("10");
+driver.FindElement(By.Id("accidents")).SendKeys("1");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided with a 27% discount on the base rate ($3000 − $810 = $2190 annually)
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo("$2190"));
+}
+
+[Test]
+public void TC10_DiscountedInsuranceForExperiencedDriver()
+{
+// Step 2: Enter valid details with Age = 45, Driving Experience = 20, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("45");
+driver.FindElement(By.Id("experience")).SendKeys("20");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided with a 27% discount on the base rate ($3000 − $810 = $2190 annually)
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo("$2190"));
+}
+
+
+[Test]
+public void TC11_InsuranceForMiddleAgedDriverNoAccidents()
+{
+
+// Step 2: Enter valid details with Age = 40, Driving Experience = 0, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("40");
+driver.FindElement(By.Id("experience")).SendKeys("0");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $6000 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$6000"));
+}
+[Test]
+public void TC12_NoInsuranceForMultipleAccidents()
+{
+
+// Step 2: Enter valid details with Age = 22, Driving Experience = 5, Accidents = 3
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("22");
+driver.FindElement(By.Id("experience")).SendKeys("5");
+driver.FindElement(By.Id("accidents")).SendKeys("3");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: No insurance provided due to excessive accidents
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo("No Insurance for you!! Too many accidents - go take a course!"));
+}
+[Test]
+public void TC13_StandardInsuranceForExperiencedDriver()
+{
+
+// Step 2: Enter valid details with Age = 35, Driving Experience = 8, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("35");
+driver.FindElement(By.Id("experience")).SendKeys("8");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $4500 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$3285"));
+}
+[Test]
+public void TC14_StandardInsuranceForYoungDriver()
+{
+
+// Step 2: Enter valid details with Age = 19, Driving Experience = 2, Accidents = 0
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
+driver.FindElement(By.Id("age")).SendKeys("19");
+driver.FindElement(By.Id("experience")).SendKeys("2");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Insurance provided at $4500 annually
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo( "$4500"));
+}
+[Test]
+public void TC15_FormValidationForInvalidEmail()
+{
+// Step 2: Enter valid details with Age = 28, Driving Experience = 3, Accidents = 0 but with an invalid email
+driver.FindElement(By.Id("firstName")).SendKeys("Yuvraj");
+driver.FindElement(By.Id("lastName")).SendKeys("Grover");
+driver.FindElement(By.Id("address")).SendKeys("12 main st");
+driver.FindElement(By.Id("city")).SendKeys("milron");
+driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
+driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil");
+driver.FindElement(By.Id("age")).SendKeys("28");
+driver.FindElement(By.Id("experience")).SendKeys("3");
+driver.FindElement(By.Id("accidents")).SendKeys("0");
+
+// Step 3: Submit the form
+driver.FindElement(By.Id("btnSubmit")).Click();
+
+// Expected outcome: Form validation error for invalid email
+string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
+Assert.That(result, Is.EqualTo("Invalid email address. Please enter a valid email."));
+}
 
 
 
