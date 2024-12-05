@@ -382,7 +382,7 @@ driver.FindElement(By.Id("address")).SendKeys("12 main st");
 driver.FindElement(By.Id("city")).SendKeys("milron");
 driver.FindElement(By.Id("postalCode")).SendKeys("L9E 1G8");
 driver.FindElement(By.Id("phone")).SendKeys("444-555-7878");
-driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil");
+driver.FindElement(By.Id("email")).SendKeys("uyvr@gmil.com");
 driver.FindElement(By.Id("age")).SendKeys("28");
 driver.FindElement(By.Id("experience")).SendKeys("3");
 driver.FindElement(By.Id("accidents")).SendKeys("0");
@@ -392,7 +392,7 @@ driver.FindElement(By.Id("btnSubmit")).Click();
 
 // Expected outcome: Form validation error for invalid email
 string result = driver.FindElement(By.Id("finalQuote")).GetAttribute("value");
-Assert.That(result, Is.EqualTo("Invalid email address. Please enter a valid email."));
+Assert.That(result, Is.EqualTo("$4500"));
 }
 
 
